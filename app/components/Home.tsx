@@ -29,7 +29,6 @@ import FirestoreService from '../utils/firestore';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100%',
     transform: 'translateZ(0px)',
     flexGrow: 1,
     display: 'flex',
@@ -77,9 +76,12 @@ const actions = [
   { icon: <AddIcon />, name: 'add a new project', action: 'add' },
 ];
 
-export default function Home(): JSX.Element {
+const Home: React.FC = () => {
   const classes = useStyles();
   const [projectList, setProjectList] = useState<IProjectList>([]);
+  const [filteredProjectList, setFilteredProjectList] = useState<IProjectList>(
+    []
+  );
   const [keyword, setKeyword] = useState<string>('');
   const [showAddDlg, setAddDlgState] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(true);
@@ -92,7 +94,7 @@ export default function Home(): JSX.Element {
     featured_image: '',
     date: '',
   });
-  const reloadProjects = () =>{
+  const reloadProjects = () => {
     FirestoreService.authenticateAnonymously()
       .then((userCredential) => {
         console.log('credential---->', userCredential);
@@ -106,15 +108,28 @@ export default function Home(): JSX.Element {
             });
           });
           setProjectList(itemList);
+          setFilteredProjectList(
+            itemList.filter(
+              (item: IProject) =>
+                item.name.toLowerCase().indexOf(keyword.toLowerCase()) != -1
+            )
+          );
           setOpen(false);
           setIsFirstLoading(false);
         });
       })
       .catch(() => console.log('anonymous-auth-failed'));
-  }
+  };
   useEffect(() => {
-    console.log('setting....');
     reloadProjects();
+  }, []);
+  useEffect(() => {
+    setFilteredProjectList(
+      projectList.filter(
+        (item: IProject) =>
+          item.name.toLowerCase().indexOf(keyword.toLowerCase()) != -1
+      )
+    );
   }, [keyword, setKeyword]);
 
   const onSearch = () => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,7 +163,6 @@ export default function Home(): JSX.Element {
   const saveProjectExcerpt = () => {
     console.log(projectDetail);
     if (projectDetail.name.length > 0 && projectDetail.description.length > 0) {
-
       FirestoreService.createProject(projectDetail)
         .then((docRef) => {
           console.log('a project has been created!');
@@ -163,7 +177,7 @@ export default function Home(): JSX.Element {
     setProjectDetail({ ...projectDetail, [prop]: event.target.value });
   };
 
-  const projects = projectList.map((item: IProject, i: string) => (
+  const projects = filteredProjectList.map((item: IProject, i: string) => (
     <div key={'wrapper-' + i} className={classes.cardHolder}>
       <ProjectCard
         key={'project-' + i}
@@ -271,4 +285,5 @@ export default function Home(): JSX.Element {
       </div>
     </div>
   );
-}
+};
+export default Home;

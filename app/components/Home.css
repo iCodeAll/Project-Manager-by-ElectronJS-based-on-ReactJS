@@ -3,7 +3,7 @@
   height: 100%;
   text-align: left;
   position: absolute;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .container h2 {
