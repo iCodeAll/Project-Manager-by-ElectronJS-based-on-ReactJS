@@ -1,0 +1,10 @@
+{
+    "fileAssociations": [
+         {
+             "ext": [".torrent"],
+             "name": "Torrent File",
+             "role": "Editor",
+             "perMachine": true
+         }
+     ]
+ }

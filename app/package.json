@@ -1,0 +1,17 @@
+{
+  "name": "project-manager",
+  "productName": "Project Manager",
+  "version": "1.0.0",
+  "description": "Electron application based on React",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Jomarie Janer",
+    "email": "jomariejaner258@gmail.com"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}
