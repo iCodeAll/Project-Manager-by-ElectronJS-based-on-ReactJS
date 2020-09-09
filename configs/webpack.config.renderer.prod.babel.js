@@ -21,7 +21,8 @@ export default merge(baseConfig, {
 
   mode: 'production',
 
-  target: process.env.E2E_BUILD ? 'electron-renderer' : 'electron-preload',
+  // target: process.env.E2E_BUILD ? 'electron-renderer' : 'electron-preload',
+  target: 'electron-renderer',
 
   entry: [
     'core-js',

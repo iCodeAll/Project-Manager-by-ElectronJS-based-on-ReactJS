@@ -118,7 +118,7 @@ const createWindow = async () => {
   mainWindow.setMenu(null);
   mainWindow.setIcon(mainIcon);
 
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();

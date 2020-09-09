@@ -1,4 +1,5 @@
 {
   "HOME": "/",
-  "COUNTER": "/counter"
+  "DETAIL_VIEW": "/projects/view/:id",
+  "DETAIL_EDIT": "/projects/edit/:id"
 }

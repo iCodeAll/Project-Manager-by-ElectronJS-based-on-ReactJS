@@ -1,11 +1,13 @@
-export interface IProject{
-    id?: string,
-    name: string,
-    description: string,
-    content?: string,
-    icon_image?: string,
-    featured_image?: string,
-    date?: string
+export interface IProject {
+  uid: string;
+  name: string;
+  description: string;
+  content: string;
+  icon_image: string;
+  featured_image: string;
+  menu01?: string;
+  menu02?: string;
+  date: string;
 }
 
-export type IProjectList = [] | IProject[]
+export type IProjectList = [] | IProject[];

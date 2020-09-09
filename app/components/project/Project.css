@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.container .leftContent {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  padding: 20px;
+}
+.container .leftContent .title {
+  color: white;
+  padding: 20px 0;
+}
+.container .leftContent .featuredImage {
+  width: 100%;
+}
+.featuredImage img{
+  width: 100%;
+}
+.container .rightContent {
+  display: flex;
+  padding: 20px;
+  width: 400px;
+  padding-top: 40px;
+}
+.container .speedDial {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+.description{
+  font-size: 16px;
+  padding: 10px 0;
+  line-height: 28px;
+}
+.container textarea{
+  width: 100%;;
+}
