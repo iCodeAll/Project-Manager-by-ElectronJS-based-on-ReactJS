@@ -38,3 +38,12 @@
 .container textarea{
   width: 100%;;
 }
+.uploadInput{
+  display: none;
+}
+.uploadWrapper{
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  min-width: 300px;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router';
 import queryString from 'query-string';
 
@@ -19,13 +19,17 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { useIdleTimer } from 'react-idle-timer';
 
+import styles from './Project.css';
+import IconButton from '@material-ui/core/IconButton';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import * as firebase from 'firebase/app';
+
 const Alert = (props: any) => {
   return <MuiAlert elevation={5} variant="filled" {...props} />;
 };
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: '100vh',
-    transform: 'translateZ(0px)',
     flexGrow: 1,
   },
   speedDial: {
@@ -71,6 +75,11 @@ const actions = [
   { icon: <CloseIcon />, name: 'Close' },
 ];
 const ProjectDetailEdit: React.FC = () => {
+  const iconImageInputRef = useRef<any>(null);
+  const featuredImageInputRef = useRef<any>(null);
+  const [progress, setProgress] = useState<number>(0);
+  const [showImgProgress, setImgProgressVisibility] = useState<boolean>(false);
+
   const classes = useStyles();
   const { id } = useParams();
   const location = useLocation();
@@ -121,6 +130,57 @@ const ProjectDetailEdit: React.FC = () => {
       default:
         break;
     }
+  };
+  const handleCapture = (props: string) => ({ target }: any) => {
+    const image = target.files[0];
+    const name = image.name;
+    console.log(props, image);
+    setImgProgressVisibility(true);
+    const uploadTask = FirebaseService.storage
+      .ref('images')
+      .child(name)
+      .put(image);
+    uploadTask.on(
+      'state_changed',
+      function (snapshot) {
+        const uploadProgress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgress(uploadProgress);
+        console.log('Upload is ' + uploadProgress + '% done');
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+        }
+      },
+      function (error) {
+        console.log('upload error: ', error);
+        setImgProgressVisibility(false);
+      },
+      function () {
+        setImgProgressVisibility(false);
+        uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+          console.log('File available at', downloadURL);
+          console.log(featuredImageInputRef);
+          console.log('props------>', props);
+          if (props === 'featured_image') {
+            console.log("featured image---->", featuredImageInputRef);
+            featuredImageInputRef.current.value = downloadURL;
+            setProjectDetails({
+              ...projectDetails,
+              featured_image: downloadURL,
+            });
+          } else {
+            iconImageInputRef.current.value = downloadURL;
+            setProjectDetails({ ...projectDetails, icon_image: downloadURL });
+          }
+        });
+      }
+    );
   };
   const onSaveClicked = () => {
     setOperationState({
@@ -261,9 +321,6 @@ const ProjectDetailEdit: React.FC = () => {
           InputLabelProps={{
             shrink: true,
           }}
-          inputProps={{
-            readOnly: Boolean(editable),
-          }}
           required
           value={projectDetails.name}
           className={classes.textField}
@@ -283,7 +340,7 @@ const ProjectDetailEdit: React.FC = () => {
           required
           onChange={changeProjectDetail('description')}
         />
-        <TextField
+        {/* <TextField
           margin="normal"
           id="content"
           label="Content"
@@ -295,7 +352,7 @@ const ProjectDetailEdit: React.FC = () => {
           className={classes.textField}
           fullWidth
           onChange={changeProjectDetail('content')}
-        />
+        /> */}
         <TextField
           margin="normal"
           id="menu01"
@@ -322,32 +379,78 @@ const ProjectDetailEdit: React.FC = () => {
           fullWidth
           onChange={changeProjectDetail('menu02')}
         />
-        <TextField
-          margin="normal"
-          id="icon_image"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          value={projectDetails.icon_image}
-          label="Icon Image"
-          className={classes.textField}
-          type="text"
-          fullWidth
-          onChange={changeProjectDetail('icon_image')}
-        />
-        <TextField
-          margin="normal"
-          id="featured_image"
-          label="Featured Image"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          value={projectDetails.featured_image}
-          className={classes.textField}
-          type="text"
-          fullWidth
-          onChange={changeProjectDetail('featured_image')}
-        />
+        <div className={styles.uploadWrapper}>
+          <TextField
+            margin="dense"
+            id="icon_image"
+            label="Icon Image"
+            type="text"
+            className={classes.textField}
+            fullWidth
+            inputRef={iconImageInputRef}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              readOnly: true,
+            }}
+            value={projectDetails.icon_image}
+            onChange={changeProjectDetail('icon_image')}
+          />
+          <input
+            accept="image/*"
+            className={styles.uploadInput}
+            id="icon-image-button"
+            onChange={handleCapture('icon_image')}
+            type="file"
+          />
+          <label htmlFor="icon-image-button">
+            <IconButton
+              edge="end"
+              size="medium"
+              color="inherit"
+              component="span"
+            >
+              <PhotoCamera />
+            </IconButton>
+          </label>
+        </div>
+        <div className={styles.uploadWrapper}>
+          <TextField
+            margin="dense"
+            id="featured_image"
+            label="Featured Image"
+            type="text"
+            className={classes.textField}
+            fullWidth
+            inputRef={featuredImageInputRef}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              readOnly: true,
+            }}
+            value={projectDetails.featured_image}
+            onChange={changeProjectDetail('featured_image')}
+          />
+          <input
+            accept="image/*"
+            className={styles.uploadInput}
+            id="featured-image-button"
+            onChange={handleCapture('featured_image')}
+            type="file"
+          />
+          <label htmlFor="featured-image-button">
+            <IconButton
+              edge="end"
+              size="medium"
+              color="inherit"
+              component="span"
+            >
+              <PhotoCamera />
+            </IconButton>
+          </label>
+        </div>
       </div>
     </div>
   );
