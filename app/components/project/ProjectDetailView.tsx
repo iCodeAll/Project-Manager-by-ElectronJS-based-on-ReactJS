@@ -21,7 +21,7 @@ import styles from './Project.css';
 
 const actions = [
   { icon: <EditIcon />, name: 'Edit' },
-  { icon: <CloseIcon />, name: 'Close' },
+  // { icon: <CloseIcon />, name: 'Close' },
 ];
 
 const ProjectDetailView: React.FC = () => {

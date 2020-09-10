@@ -112,7 +112,30 @@ const ProjectCard = forwardRef((props: IProps, ref) => {
     }
   };
   const performProjectViewMode = (projectID: string) => {
-    push(`/projects/view/${projectID}?editable=false`);
+
+    const nativeImage = require('electron').nativeImage;
+    const remote=require('electron').remote;
+    const BrowserWindow=remote.BrowserWindow;
+
+    const mainIcon = nativeImage.createFromPath(
+      __dirname + '/../resources/icon.png'
+    );
+    const win = new BrowserWindow({
+      height: 600,
+      width: 800,
+      icon: mainIcon,
+      title: projectID,
+      resizable: true,
+      webPreferences: {
+        nodeIntegration: true,
+        webSecurity: false
+    }
+    });
+    win.setMenu(null);
+    win.setTitle(projectID);
+    // win.webContents.openDevTools();
+    win.loadURL(`file://${__dirname}/app.html#/projects/view/${projectID}`);
+    // push(`/projects/view/${projectID}?editable=false`);
   };
   const performProjectEditMode = (projectID: string) => {
     push(`/projects/edit/${projectID}?editable=true`);
@@ -142,7 +165,7 @@ const ProjectCard = forwardRef((props: IProps, ref) => {
               onClose={closeActionMenu}
             >
               <MenuItem onClick={doAction(uid, 'view')}>View</MenuItem>
-              <MenuItem onClick={doAction(uid, 'edit')}>Edit</MenuItem>
+              {/* <MenuItem onClick={doAction(uid, 'edit')}>Edit</MenuItem> */}
               <MenuItem onClick={() => onDelete(ref, uid)}>Delete</MenuItem>
             </Menu>
           </div>

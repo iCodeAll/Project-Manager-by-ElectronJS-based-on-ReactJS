@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
 const actions = [
   { icon: <SaveIcon />, name: 'Save' },
   { icon: <ViewIcon />, name: 'View' },
-  { icon: <CloseIcon />, name: 'Close' },
+  // { icon: <CloseIcon />, name: 'Close' },
 ];
 const ProjectDetailEdit: React.FC = () => {
   const iconImageInputRef = useRef<any>(null);
